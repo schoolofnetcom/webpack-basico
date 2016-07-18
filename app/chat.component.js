@@ -1,12 +1,9 @@
-var Vue = require('vue');
-var VueFire = require('vuefire');
-var db = require('./firebase-db');
+define('chat.component',
+    ['vue', 'vuefire', './firebase-db'], function (Vue, VueFire, db) {
+        Vue.use(VueFire);
 
-Vue.use(VueFire);
-
-
-module.exports = {
-    template: `
+        return {
+            template: `
                 <style type="text/css" scoped>
                     .chat {
                         padding: 0;
@@ -59,31 +56,32 @@ module.exports = {
                     </div>
                 </div>
         `,
-    created: function () {
-        var roomRef = 'chat/rooms/' + this.$route.params.room;
-        this.$bindAsArray('messages', db.ref(roomRef + '/messages'));
-    },
-    data: function () {
-        return {
-            user: {
-                email: localStorage.getItem('email'),
-                name: localStorage.getItem('name'),
-                photo: localStorage.getItem('photo')
+            created: function () {
+                var roomRef = 'chat/rooms/' + this.$route.params.room;
+                this.$bindAsArray('messages', db.ref(roomRef + '/messages'));
             },
-            message: ''
+            data: function () {
+                return {
+                    user: {
+                        email: localStorage.getItem('email'),
+                        name: localStorage.getItem('name'),
+                        photo: localStorage.getItem('photo')
+                    },
+                    message: ''
+                };
+            },
+            methods: {
+                isUser: function (email) {
+                    return this.user.email == email;
+                },
+                sendMessage: function () {
+                    this.$firebaseRefs.messages.push({
+                        name: this.user.name,
+                        email: this.user.email,
+                        text: this.message,
+                        photo: this.user.photo
+                    });
+                }
+            }
         };
-    },
-    methods: {
-        isUser: function (email) {
-            return this.user.email == email;
-        },
-        sendMessage: function () {
-            this.$firebaseRefs.messages.push({
-                name: this.user.name,
-                email: this.user.email,
-                text: this.message,
-                photo: this.user.photo
-            });
-        }
-    }
-};
+    });

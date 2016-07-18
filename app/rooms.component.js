@@ -1,14 +1,12 @@
-require('./jquery');
-require('bootstrap');
-var md5 = require('blueimp-md5');
-var Vue = require('vue');
-var VueFire = require('vuefire');
-var db = require('./firebase-db');
+define('rooms.component',
+    [
+        'blueimp-md5', 'vue', 'vuefire', './firebase-db', 'bootstrap',
+    ], function (md5, Vue, VueFire, db) {
 
-Vue.use(VueFire);
+        Vue.use(VueFire);
 
-module.exports = {
-    template: `
+        module.exports = {
+            template: `
      <div class="col-md-4" v-for="o in rooms">
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -46,35 +44,36 @@ module.exports = {
       </div>
     </div>
     `,
-    firebase: {
-        rooms: db.ref('chat/rooms')
-    },
-    data: function () {
-        return {
-            rooms: [
-                {id: "001", name: "PHP", description: "Entusiasta do PHP"},
-                {id: "002", name: "Java", description: "Developer experts"},
-                {id: "003", name: "C#", description: "Os caras do C#"},
-                {id: "004", name: "C++", description: "Fissurados por programação"},
-                {id: "005", name: "Javascript", description: "Olha a web aí!"},
-                {id: "006", name: "Vue.js", description: "Chat dos caras do data-binding"},
-            ],
-            name: '',
-            email: '',
-            room: null
+            firebase: {
+                rooms: db.ref('chat/rooms')
+            },
+            data: function () {
+                return {
+                    rooms: [
+                        {id: "001", name: "PHP", description: "Entusiasta do PHP"},
+                        {id: "002", name: "Java", description: "Developer experts"},
+                        {id: "003", name: "C#", description: "Os caras do C#"},
+                        {id: "004", name: "C++", description: "Fissurados por programação"},
+                        {id: "005", name: "Javascript", description: "Olha a web aí!"},
+                        {id: "006", name: "Vue.js", description: "Chat dos caras do data-binding"},
+                    ],
+                    name: '',
+                    email: '',
+                    room: null
+                };
+            },
+            methods: {
+                login: function () {
+                    localStorage.setItem('name', this.name);
+                    localStorage.setItem('email', this.email);
+                    localStorage.setItem('photo', 'http://www.gravatar.com/avatar/' + md5(this.email) + '.jpg');
+                    $('#modalLoginEmail').modal('hide');
+                    this.$route.router.go('/chat/' + this.room.id);
+                },
+                openModal: function (room) {
+                    this.room = room;
+                    $('#modalLoginEmail').modal('show');
+                }
+            }
         };
-    },
-    methods: {
-        login: function () {
-            localStorage.setItem('name', this.name);
-            localStorage.setItem('email', this.email);
-            localStorage.setItem('photo', 'http://www.gravatar.com/avatar/' + md5(this.email) + '.jpg');
-            $('#modalLoginEmail').modal('hide');
-            this.$route.router.go('/chat/' + this.room.id);
-        },
-        openModal: function (room) {
-            this.room = room;
-            $('#modalLoginEmail').modal('show');
-        }
-    }
-};
+    });

@@ -1,23 +1,30 @@
-var Vue = require('vue');
-var VueRouter = require('vue-router');
+require([
+    'vue',
+    'vue-router',
+    './rooms-create.component',
+    './rooms.component',
+    './chat.component'
+], function (Vue, VueRouter, RoomsCreateComponent, RoomsComponent, ChatComponent) {
+    Vue.use(VueRouter);
 
-Vue.use(VueRouter);
+    var appComponent = Vue.extend({});
 
-var appComponent = Vue.extend({});
+    var router = new VueRouter();
 
-var router = new VueRouter();
+    router.map({
+        '/chat/:room': {
+            component: ChatComponent
+        },
+        '/rooms': {
+            component: RoomsComponent
+        },
+        '/rooms-create': {
+            component: RoomsCreateComponent
+        }
+    });
 
-router.map({
-    '/chat/:room': {
-        component: require('./chat.component')
-    },
-    '/rooms': {
-        component: require('./rooms.component')
-    },
-    '/rooms-create': {
-        component: require('./rooms-create.component')
-    }
+    router.start(appComponent, "#app");
+
+
 });
-
-router.start(appComponent, "#app");
 
