@@ -5,7 +5,7 @@ define('rooms.component',
 
         Vue.use(VueFire);
 
-        module.exports = {
+        return {
             template: `
      <div class="col-md-4" v-for="o in rooms">
         <div class="panel panel-primary">
